@@ -19,14 +19,20 @@ include('config.php');
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
+$id = $_POST['users_id'];
+$users_name = trim($_POST['users_name']);
+$users_email = trim($_POST['users_email']);
+$users_phone = trim($_POST['users_phone']);
+$users_password = trim($_POST['users_password']);
 
-    $sql = "SELECT id, name, email, phone FROM users LIMIT 15";
+  $sql = $conn->prepare('SELECT * FROM users WHERE 1');
+//$sql->bind_param('ssss',  $id, $users_name, $users_email, $users_phone ); // 's' SELECT * FROM users WHEREspecifies the variable type => 'string'
+$sql->execute();
 
-    $result = $conn->query($sql);
+$result = $sql->get_result();
+if ($sql->execute()) {
+    while ($row = $result->fetch_assoc()) {
 
-    if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-            // echo "id: " . $row["id"]. " - Name: " . $row["name"].  "<br>";
             echo '<tr>
 
 <td>' . $row['id'] . '</td> 

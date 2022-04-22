@@ -36,13 +36,13 @@ include('config.php');
             <label for="name">name:</label>
             <input type="text" id="name" name="users_name">
         </div>
+               <div>
+            <label for="email">email:</label>
+            <input type="text" id="email" name="users_email">
+        </div>
         <div>
             <label for="phone">phone:</label>
             <input type="text" id="phone" name="users_phone">
-        </div>
-        <div>
-            <label for="email">email:</label>
-            <input type="text" id="email" name="users_email">
         </div>
         <div>
             <label for="password">passwd:</label>
@@ -69,18 +69,46 @@ if (!empty($_POST)) {
     $users_phone = trim($_POST['users_phone']);
     $users_password = trim($_POST['users_password']);
 
-   // $sql = "SELECT id, name, email, phone, password FROM users LIMIT 25";
-    $sql = "SELECT * FROM users  WHERE name='$users_name' ";
-    $result = $conn->query($sql);
 
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
 
-                      echo "id: " . $row["id"] . " - Name: " . $row["name"] . " - Email: " . $row["email"] . "<br>";
+    $sql = $conn->prepare('SELECT * FROM users WHERE name = ?');
+    $sql->bind_param('s', $users_name); // 's' specifies the variable type => 'string'
+    $sql->execute();
 
-        }
-    } else {
-        echo "0 results";
+    $result = $sql->get_result();
+    if ($sql->execute()) {
+    while ($row = $result->fetch_assoc()) {
+        echo "id: " . $row["id"] . " - Name: " . $row["name"] . " - Email: " . $row["email"] . "<br>";
+        // Do something with $row
     }
-    $conn->close();
+
+   } else {
+     echo "0 results";
+  }
+
+//    var_dump ('<pre>', $id, name, email, phone);
+// $sql = $conn->prepare("SELECT  id =?, name=?, email=?, phone= ? FROM users WHERE LIMIT 25");
+//$sql->bind_param('ssss', $id,  $users_name, $users_email, $users_phone);
+//
+//var_dump ('<pre>', $users_name, $users_email, $users_phone);
+//
+// $sql->bind_result($id, $users_name, $users_email, $users_phone);
+//
+
+
+   // $sql = "SELECT id, name, email, phone, password FROM users LIMIT 25";
+    //$sql = "SELECT * FROM users  WHERE name='$users_name' ";
+   // $result = $conn->query($sql);
+
+//    if ($sql->execute()) {
+//       // while ($row = $result->fetch_assoc()) {
+//        while ($row = $sql->fetch()) {
+//                      echo "id: " . $row["id"] . " - Name: " . $row["name"] . " - Email: " . $row["email"] . "<br>";
+//
+//        }
+//    } else {
+//        echo "0 results";
+//    }
+//    //$conn->close();
+    $sql->close();
 }

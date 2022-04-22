@@ -43,13 +43,14 @@ include('config.php');
         <label for="users_name">name:</label>
         <input type="text" id="users_name" name="users_name">
     </div>
-    <div>
-        <label for="phone">phone:</label>
-        <input type="text" id="phone" name="users_phone">
-    </div>
+
     <div>
         <label for="email">email:</label>
         <input type="text" id="email" name="users_email">
+    </div>
+    <div>
+        <label for="phone">phone:</label>
+        <input type="text" id="phone" name="users_phone">
     </div>
     <div>
         <label for="password">passwd:</label>
@@ -74,15 +75,16 @@ if (!empty($_POST)) {
     $users_phone = trim($_POST['users_phone']);
     $users_password = trim($_POST['users_password']);
 
-    $sql = "UPDATE users SET name='$users_name', email='$users_email', phone='$users_phone', password='$users_password' WHERE id='$id'";
+    $sql = $conn->prepare("UPDATE users SET name=?, email=?, phone= ?, password= ? WHERE id= ?");
+    $sql->bind_param('sssss',  $users_name, $users_email, $users_phone, $users_password, $id);
 
-    if ($conn->query($sql) === TRUE) {
+    if ($sql->execute()) {
         echo "Record updated successfully";
     } else {
-        echo "Error updating record: " . $conn->error;
+        echo "Error updating record";
     }
 
-    $conn->close();
+    $sql->close();
 }
 
 ?>

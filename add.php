@@ -13,15 +13,17 @@ if (!empty($_POST)) {
     $users_phone = trim($_POST['users_phone']);
     $users_password = trim($_POST['users_password']);
 
-    $sql = "INSERT INTO users (`name`, `email` ,  `phone`, `password`) VALUES ('$users_name','$users_email', '$users_phone', '$users_password')";
 
-    if ($conn->query($sql) === TRUE) {
+    $sql = $conn->prepare("insert into users (`name`, `email` ,  `phone`, `password`) values (?, ?,?, ?)");
+   $sql->bind_param("ssss", $users_name, $users_email, $users_phone, $users_password);
+
+       if (   $sql->execute()) {
         echo "New record created successfully";
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        echo "Error updating record";
     }
 
-    $conn->close();
+    $sql->close();
 }
 ?>
 <!DOCTYPE html>
